@@ -58,7 +58,7 @@ http://localhost:8080
 
 This project was built to:
 
-Learn Spring Boot REST APIs
+Spring Boot REST APIs
 
 Practice controller–model structure
 
