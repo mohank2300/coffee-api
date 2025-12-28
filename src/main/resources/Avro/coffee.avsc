@@ -1,0 +1,10 @@
+{
+		"namespace": "com.coffeeshop.coffee_api.kafka.avro",
+				"type": "record",
+				"name": "CoffeeAvro",
+		"fields": [
+		{ "name": "id",   "type": ["null", "long"], "default": null },
+		{ "name": "name", "type": "string" },
+		{ "name": "price","type": "double" }
+		]
+		}

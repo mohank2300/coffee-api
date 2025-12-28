@@ -1,5 +1,9 @@
 package com.coffeeshop.coffee_api.controller;
 
+<<<<<<< Updated upstream
+=======
+import com.coffeeshop.coffee_api.kafka.OrderEventProducer;
+>>>>>>> Stashed changes
 import com.coffeeshop.coffee_api.model.Order;
 import com.coffeeshop.coffee_api.model.OrderStatus;
 import org.springframework.http.HttpStatus;
@@ -16,6 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequestMapping("/orders")
 public class OrderController {
 
+<<<<<<< Updated upstream
     private final List<Order> orders = new ArrayList<>();
     private final AtomicLong orderIdSeq = new AtomicLong(1);
 
@@ -23,6 +28,15 @@ public class OrderController {
     private static final double TAX_RATE = 0.10;
 
     // ✅ scheduler for auto status flow
+=======
+    private final OrderEventProducer producer;
+
+    private final List<Order> orders = new ArrayList<>();
+    private final AtomicLong orderIdSeq = new AtomicLong(1);
+
+    private static final double TAX_RATE = 0.10;
+
+>>>>>>> Stashed changes
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     private final Map<Long, String> coffeeNames = Map.of(
@@ -30,8 +44,11 @@ public class OrderController {
             2L, "Latte",
             3L, "Cappuccino",
             4L, "Mocha"
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
     );
 
     private final Map<Long, Double> coffeeBasePrices = Map.of(
@@ -41,6 +58,13 @@ public class OrderController {
             4L, 4.75
     );
 
+<<<<<<< Updated upstream
+=======
+    public OrderController(OrderEventProducer producer) {
+        this.producer = producer;
+    }
+
+>>>>>>> Stashed changes
     private double sizeMultiplier(String size) {
         if (size == null) return 1.0;
         return switch (size.trim().toLowerCase()) {
@@ -67,20 +91,31 @@ public class OrderController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid coffeeId: " + order.getCoffeeId());
         }
 
+<<<<<<< Updated upstream
         // orderId
+=======
+>>>>>>> Stashed changes
         if (order.getOrderId() == null || order.getOrderId() == 0) {
             order.setOrderId(orderIdSeq.getAndIncrement());
         }
 
+<<<<<<< Updated upstream
         // coffee name
         order.setCoffeeName(coffeeNames.get(order.getCoffeeId()));
 
         // type normalize
+=======
+        order.setCoffeeName(coffeeNames.get(order.getCoffeeId()));
+
+>>>>>>> Stashed changes
         String t = order.getType();
         if (t == null || t.isBlank()) t = "HOT";
         order.setType(t.trim().toUpperCase());
 
+<<<<<<< Updated upstream
         // prices
+=======
+>>>>>>> Stashed changes
         double unitPrice = basePrice * sizeMultiplier(order.getSize());
         double subTotal = unitPrice * order.getQuantity();
         double tax = subTotal * TAX_RATE;
@@ -91,12 +126,16 @@ public class OrderController {
         order.setTax(round2(tax));
         order.setGrandTotal(round2(grandTotal));
 
+<<<<<<< Updated upstream
         // status + timestamps
+=======
+>>>>>>> Stashed changes
         order.setStatus(OrderStatus.PLACED);
         Instant now = Instant.now();
         order.setCreatedAt(now);
         order.setUpdatedAt(now);
 
+<<<<<<< Updated upstream
         orders.add(order);
 
         // ✅ AUTO FLOW SCHEDULED IN BACKEND
@@ -107,6 +146,20 @@ public class OrderController {
 
         // PREPARING -> READY in 20s (10s after preparing)
         scheduler.schedule(() -> autoUpdateStatus(id, OrderStatus.PREPARING, OrderStatus.READY), 20, TimeUnit.SECONDS);
+=======
+        synchronized (orders) {
+            orders.add(order);
+        }
+
+        producer.publishOrderPlaced(order);
+
+        long id = order.getOrderId();
+
+        scheduler.schedule(() -> autoUpdateStatus(id, OrderStatus.PLACED, OrderStatus.PREPARING),
+                10, TimeUnit.SECONDS);
+        scheduler.schedule(() -> autoUpdateStatus(id, OrderStatus.PREPARING, OrderStatus.READY),
+                20, TimeUnit.SECONDS);
+>>>>>>> Stashed changes
 
         return order;
     }
@@ -119,6 +172,10 @@ public class OrderController {
                         if (o.getStatus() == expected) {
                             o.setStatus(next);
                             o.setUpdatedAt(Instant.now());
+<<<<<<< Updated upstream
+=======
+                            producer.publishStatusUpdated(o);
+>>>>>>> Stashed changes
                         }
                         break;
                     }
@@ -129,7 +186,13 @@ public class OrderController {
 
     @GetMapping
     public List<Order> getOrders() {
+<<<<<<< Updated upstream
         return orders;
+=======
+        synchronized (orders) {
+            return new ArrayList<>(orders);
+        }
+>>>>>>> Stashed changes
     }
 
     @PatchMapping("/{orderId}/status")
@@ -147,6 +210,7 @@ public class OrderController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status: " + statusStr);
         }
 
+<<<<<<< Updated upstream
         Order order = orders.stream()
                 .filter(o -> o.getOrderId() != null && o.getOrderId() == orderId)
                 .findFirst()
@@ -154,6 +218,20 @@ public class OrderController {
 
         order.setStatus(newStatus);
         order.setUpdatedAt(Instant.now());
+=======
+        Order order;
+        synchronized (orders) {
+            order = orders.stream()
+                    .filter(o -> o.getOrderId() != null && o.getOrderId() == orderId)
+                    .findFirst()
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Order not found: " + orderId));
+            order.setStatus(newStatus);
+            order.setUpdatedAt(Instant.now());
+        }
+
+        producer.publishStatusUpdated(order);
+>>>>>>> Stashed changes
         return order;
     }
 }

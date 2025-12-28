@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -5,6 +6,28 @@ target/
 !**/src/test/**/target/
 
 ### STS ###
+=======
+############################
+# Maven / build output
+############################
+
+# Main target directory
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Maven wrapper JAR
+.mvn/wrapper/maven-wrapper.jar
+
+# Generated docs (optional)
+HELP.md
+
+############################
+# IDE / tooling files
+############################
+
+### STS / Eclipse ###
+>>>>>>> Stashed changes
 .apt_generated
 .classpath
 .factorypath
@@ -14,7 +37,11 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
+<<<<<<< Updated upstream
 .idea
+=======
+.idea/
+>>>>>>> Stashed changes
 *.iws
 *.iml
 *.ipr
@@ -31,3 +58,13 @@ build/
 
 ### VS Code ###
 .vscode/
+<<<<<<< Updated upstream
+=======
+
+############################
+# OS / editor junk
+############################
+.DS_Store
+Thumbs.db
+*.log
+>>>>>>> Stashed changes

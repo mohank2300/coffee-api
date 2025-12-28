@@ -1,5 +1,6 @@
 package com.coffeeshop.coffee_api.controller;
 
+<<<<<<< Updated upstream
 import com.coffeeshop.coffee_api.model.Coffee;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,3 +29,38 @@ public class CoffeeController {
     }
 }
 
+=======
+import com.coffeeshop.coffee_api.Service.CoffeeKafkaService;
+import com.coffeeshop.coffee_api.model.Coffee;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/coffees")
+public class CoffeeController {
+
+    private static final Logger log = LoggerFactory.getLogger(CoffeeController.class);
+
+    private final CoffeeKafkaService coffeeKafkaService;
+
+    public CoffeeController(CoffeeKafkaService coffeeKafkaService) {
+        this.coffeeKafkaService = coffeeKafkaService;
+    }
+
+    // Simple endpoint to publish a coffee event to Kafka
+    @PostMapping("/publish")
+    public ResponseEntity<Void> publish(@RequestBody Coffee coffee) {
+        log.info("REST request: publish coffee -> {}", coffee);
+        coffeeKafkaService.publish(coffee);
+        return ResponseEntity.accepted().build();
+    }
+
+    // Optional health check endpoint
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("coffee controller is up");
+    }
+}
+>>>>>>> Stashed changes

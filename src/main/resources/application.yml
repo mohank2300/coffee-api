@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+
+app:
+  kafka:
+    topic: order-events
+    schema-registry-url: http://localhost:8081
+
+logging:
+  level:
+    root: INFO
+    com.coffeeshop.coffee_api: INFO

@@ -9,5 +9,8 @@ public class CoffeeApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CoffeeApiApplication.class, args);
 	}
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 }
